@@ -44,9 +44,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         private int rotationCount = 0;
         public double pidOutput =0; 
     
-        // Elastic Dashboard via NetworkTables
-        private final NetworkTable dashboardTable;
-        private final NetworkTableEntry positionEntry;
         private static double elevatorPower;
     
         public final CoralHandlerSubsystem coralHandler;
@@ -76,21 +73,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     
             // Initialize Encoder
             elevatorEncoder = new Encoder(8, 9);
-            // elevatorEncoder.setConnectedFrequencyThreshold(100);//
+            elevatorEncoder.setDistancePerPulse(1.0 / TICKS_PER_INCH); 
     
             // Initialize PID Controller
             elevatorPID = new PIDController(0.225, 0.001, 0.01); // Adjust constants as needed
             elevatorPID.setTolerance(0.025); // Allowable error range
-    
-            // Elastic Dashboard via NetworkTables
-            dashboardTable = NetworkTableInstance.getDefault().getTable("Elevator");
-            positionEntry = dashboardTable.getEntry("Elevator Position");
-            //elevatorPower = dashboardTable.getEntry("Motor Current");
 
             Shuffleboard.getTab("Elevator").addNumber("Encoder Raw", () -> -elevatorEncoder.get());
             Shuffleboard.getTab("Elevator").addNumber("Elevator Height", () -> getElevatorPosition());
 
-            Shuffleboard.getTab("Sam").addNumber("Target Position", () -> targetPosition);
+            Shuffleboard.getTab("Elevator").addNumber("Target Position", () -> targetPosition);
 
         }
     
@@ -100,67 +92,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     
             if (isWithinBounds(targetPosition)) { 
                 double pidOutput = elevatorPID.calculate(getElevatorPosition(), targetPosition);
-               elevatorPower = pidOutput;
-                if(coralHandler.isIntakeBroken() && getElevatorPosition() < 2){
-                    stop();
-                }else{
-                    if(elevatorPower < 0){
-                        elevatorMotor.set(elevatorPower/50);
-                    }else{
-                        elevatorMotor.set(elevatorPower);
-                    }
-                }
-            } else {
-                setLEDColor(Constants.LEDConstants.RED, "red");
-                stop();
+                // double ffOutput = elevatorFF.calculate();
             }
         }
-    /* DO NOT USE THIS CODE UNLESS YOU REALLY KNOW WHAT UR DOING :p
-    public void setElevatorPosition(double Target, boolean climb) {
-            targetPosition = Target;
-    
-            if (isWithinBounds(targetPosition)) { 
-                double pidOutput = elevatorPID.calculate(getElevatorPosition(), targetPosition);
-               elevatorPower = pidOutput;
-                if(coralHandler.isIntakeBroken() && getElevatorPosition() < 1.5){
-                    stop();
-                }else{
-                    if(elevatorPower < 0){
-                        if(climb){
-                            elevatorMotor.set(elevatorPower);
-                        }else{
-                            elevatorMotor.set(elevatorPower/100);
-                        }
-                    }else{
-                        elevatorMotor.set(elevatorPower);
-                    }
-                }
-            } else {
-                stop();
-            }
-        }
-            */
+
     
         public void stop() {
             elevatorMotor.set(0);
         }
+
+        public double getVeocity() {
+            return elevatorEncoder.getRate() / TICKS_PER_INCH;
+        }
     
         public double getElevatorPosition() {
-                double currentRawValue = -elevatorEncoder.get() ;
-    
-                //Rollover Counter...
-                // if (currentRawValue - lastRawValue > 0.5) {
-                //     rotationCount--;
-                // } else if (lastRawValue - currentRawValue > 0.5) {
-                //     rotationCount++;
-                // }
-                
-                lastRawValue = currentRawValue;
-    
-                double totalRotations = rotationCount + currentRawValue;
-    
-                return (totalRotations / TICKS_PER_INCH);
-    }
+            return elevatorEncoder.getDistance();
+        }
 
     public double getTargetPosition(){
         return targetPosition;
@@ -182,11 +129,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Update Elastic Dashboard via NetworkTables
-        double elevatorPosition = getElevatorPosition();
-        //System.out.println("Elevator Position: " + elevatorPosition + "inches");
-        positionEntry.setDouble(getElevatorPosition());
-        //elevatorPower = elevatorMotor.getOutputCurrent();
+
         
     }
 }
