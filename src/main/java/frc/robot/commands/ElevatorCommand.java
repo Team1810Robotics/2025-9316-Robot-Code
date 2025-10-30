@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorCommand extends Command {
@@ -30,8 +31,8 @@ public class ElevatorCommand extends Command {
         //sam was here
         this.elevatorSubsystem = elevatorSubsystem;
 
-        this.adjustment = isUp ? ElevatorSubsystem.MANUAL_ADJUST_INCREMENT  : -ElevatorSubsystem.MANUAL_ADJUST_INCREMENT;
-        this.targetPosition = elevatorSubsystem.getElevatorPosition() + adjustment;
+        this.adjustment = isUp ? ElevatorConstants.MANUAL_ADJUST_INCREMENT  : -ElevatorConstants.MANUAL_ADJUST_INCREMENT;
+        this.targetPosition = elevatorSubsystem.getPosition() + adjustment;
         System.out.println("Setting target position to adjustment: " + targetPosition);
         
 

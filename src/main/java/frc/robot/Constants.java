@@ -2,6 +2,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.I2C.Port;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import com.revrobotics.spark.SparkMax;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -12,6 +15,8 @@ import edu.wpi.first.wpilibj.XboxController;
 @SuppressWarnings("unused")
 public class Constants {
 
+    public static final boolean tuningMode = false;
+
     public static final class ElevatorConstants {
         public static final double ELEVATOR_UP_POSITION = 0.25; // Units? (e.g., percentage, encoder ticks)
         public static final double ELEVATOR_DOWN_POSITION = 0; // Units?
@@ -19,6 +24,20 @@ public class Constants {
         public static final int ELEVATOR_MOTOR_2_ID = 9;  // Motor ID
         public static final int ELEVATOR_ENCODER_PORT = 9; // Encoder port
         public static final int smartCurrentLimit = 60;
+
+        public static final double MAX_VELOCITY = 0;
+        public static final double MAX_ACCELERATION = 0;
+
+        public static final double MAX_HEIGHT = Inches.of(40).in(Meters);
+        public static final double MIN_HEIGHT = 0;
+        public static final double INTAKE_POSITION = 0;
+        public static final double L1_POSITION = Inches.of(10.25).in(Meters);   
+        public static final double L2_POSITION = Inches.of(26).in(Meters);
+        public static final double Algae1 = Inches.of(18.5).in(Meters); 
+        public static final double Algae2 = Inches.of(34.5).in(Meters); 
+        public static final double climb = Inches.of(40).in(Meters); 
+        public static final double MANUAL_ADJUST_INCREMENT = Inches.of(.5).in(Meters); 
+        public static final double TICKS_PER_INCH = 185.0;
 
         public static final class ElevatorLeft {
             public static final int kFollowerModeLeaderId = 9;

@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.*;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.AlgaeCommand;
 import frc.robot.commands.AutoCoralReleaseCommand;
 import frc.robot.commands.ElevatorCommand;
@@ -91,7 +92,7 @@ public class RobotContainer {
     public final VisionSubsystem visionSubsystem = new VisionSubsystem();
     
     
-    public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(coralHandler, ledSubsystem); // Initialize Elevator Subsystem
+    public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(); // Initialize Elevator Subsystem
     //private final SendableChooser<Command> autoChooser = new SendableChooser<>();
     private final SendableChooser<Command> autoChooser;
     
@@ -137,13 +138,13 @@ public class RobotContainer {
             .withPosition(0,2).withSize(2,1);
 
         // Elevator Data
-        mainTab.addNumber("Elevator Position", () -> elevatorSubsystem.getElevatorPosition())
+        mainTab.addNumber("Elevator Position", () -> elevatorSubsystem.getPosition())
             .withPosition(2,0).withSize(2,1);
 
         mainTab.addNumber("Elevator Target", () -> elevatorSubsystem.getTargetPosition())
             .withPosition(4,0).withSize(2,1);
 
-        mainTab.addNumber("Elevator Power", () -> elevatorSubsystem.getElevatorPower())
+        mainTab.addNumber("Elevator Volts", () -> elevatorSubsystem.elevatorVolts)
             .withPosition(4,2).withSize(2,1);
         //Coral Process
         mainTab.addBoolean("Is Coral In Process", () -> coralHandler.isCoralInProcess())
@@ -228,11 +229,11 @@ xboxDrive.x().whileTrue(
        
 
         // Elevator Controls
-        gamepadManipulator.a().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.INTAKE_POSITION));    // Intake
-        gamepadManipulator.b().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.L1_POSITION));        // L1
-        gamepadManipulator.x().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.L2_POSITION));        // L2
-        gamepadManipulator.rightBumper().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Algae1));        // L3
-        gamepadManipulator.leftBumper().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorSubsystem.Algae2));        // L3
+        gamepadManipulator.a().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorConstants.INTAKE_POSITION));    // Intake
+        gamepadManipulator.b().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorConstants.L1_POSITION));        // L1
+        gamepadManipulator.x().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorConstants.L2_POSITION));        // L2
+        gamepadManipulator.rightBumper().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorConstants.Algae1));        // L3
+        gamepadManipulator.leftBumper().onTrue(new ElevatorCommand(elevatorSubsystem, ElevatorConstants.Algae2));        // L3
         
         gamepadManipulator.y().whileTrue(new InstantCommand(() -> coralHandler.nudge()))
         .onFalse(new InstantCommand(() -> coralHandler.stopCoralHandler()));
